@@ -1,27 +1,8 @@
-variable "name" {
-  type = string
-}
-
-variable "description" {
-  type    = string
-  default = ""
-}
-
-variable "rules" {
-  description = "List of ingress rules to create"
-  type = list(object({
-    protocol         = string # e.g. "tcp", "udp", "icmp"
-    port_range_min   = number # lower port (use 0 for all)
-    port_range_max   = number # upper port (same as min for single port)
-    remote_ip_prefix = string # CIDR block, e.g. 0.0.0.0/0
-    ethertype        = optional(string, "IPv4")
-    direction        = optional(string, "ingress")
-  }))
-}
-
 resource "openstack_networking_secgroup_v2" "this" {
   name        = var.name
   description = var.description
+
+  tags = toset(values(var.tags))
 }
 
 resource "openstack_networking_secgroup_rule_v2" "this" {
